@@ -325,6 +325,7 @@ menu {
 .expiry-list,
 .beneficiary-list,
 .donor-list,
+.movement-list,
 .calendar-grid {
   display: grid;
   gap: 10px;
@@ -333,6 +334,7 @@ menu {
 .expiry-item,
 .beneficiary-item,
 .donor-item,
+.movement-item,
 .visit-item,
 .message-card {
   display: grid;
@@ -346,6 +348,10 @@ menu {
 .expiry-item {
   grid-template-columns: 1fr auto;
   align-items: center;
+}
+
+.no-action {
+  grid-template-columns: 1fr;
 }
 
 .item-title {
@@ -444,6 +450,14 @@ menu {
 
 .toolbar {
   margin-bottom: 14px;
+}
+
+.toolbar.right {
+  justify-content: flex-end;
+}
+
+.movement-panel {
+  margin-top: 16px;
 }
 
 .table-wrap {

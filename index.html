@@ -57,23 +57,7 @@
 
       <main class="workspace">
         <header class="topbar">
-          <div>
-            <span class="eyebrow">Protótipo web responsivo</span>
-            <h1 id="page-title">Painel de impacto</h1>
-          </div>
-          <div class="topbar-actions">
-            <button class="icon-button" type="button" data-action="open-public-form" aria-label="Abrir formulário público">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M4 6h16M4 12h10M4 18h16"></path>
-              </svg>
-            </button>
-            <button class="primary-action" type="button" data-action="open-donation">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 5v14M5 12h14"></path>
-              </svg>
-              Nova entrada
-            </button>
-          </div>
+          <h1 id="page-title">Painel de impacto</h1>
         </header>
 
         <section class="view active" id="dashboard" data-title="Painel de impacto">
@@ -88,10 +72,10 @@
               <strong>2,4 t</strong>
               <small>86 cestas e itens avulsos</small>
             </article>
-            <article class="metric alert">
-              <span>Itens próximos do vencimento</span>
-              <strong>9</strong>
-              <small>3 vencem em menos de 72h</small>
+            <article class="metric">
+              <span>Alimentos arrecadados</span>
+              <strong>3,1 t</strong>
+              <small>47 doações registradas</small>
             </article>
             <article class="metric">
               <span>Doadores ativos</span>
@@ -100,45 +84,18 @@
             </article>
           </div>
 
-          <div class="dashboard-layout">
-            <section class="panel">
-              <div class="panel-heading">
-                <div>
-                  <h2>Prioridade de distribuição</h2>
-                  <p>Itens ordenados por validade mais próxima.</p>
-                </div>
-                <button class="ghost-action" type="button" data-view-link="estoque">Ver estoque</button>
+          <section class="panel">
+            <div class="panel-heading">
+              <div>
+                <h2>Prioridade de distribuição</h2>
+                <p>Itens ordenados por validade mais próxima.</p>
               </div>
-              <div class="expiry-list" id="priority-list"></div>
-            </section>
-
-            <section class="panel impact-panel">
-              <div class="panel-heading">
-                <div>
-                  <h2>Resumo operacional</h2>
-                  <p>Controle mensal para prestação de contas.</p>
-                </div>
-              </div>
-              <div class="progress-row">
-                <span>Beneficiários com visita válida</span>
-                <strong>74%</strong>
-                <div class="progress"><span style="width: 74%"></span></div>
-              </div>
-              <div class="progress-row">
-                <span>Doadores recebendo comunicações</span>
-                <strong>82%</strong>
-                <div class="progress"><span style="width: 82%"></span></div>
-              </div>
-              <div class="progress-row">
-                <span>Relatório mensal concluído</span>
-                <strong>60%</strong>
-                <div class="progress"><span style="width: 60%"></span></div>
-              </div>
-            </section>
-          </div>
+            </div>
+            <div class="expiry-list" id="priority-list"></div>
+          </section>
         </section>
 
-        <section class="view" id="estoque" data-title="Controle de estoque e validade">
+        <section class="view" id="estoque" data-title="Controle de estoque">
           <div class="toolbar">
             <div class="segmented" role="tablist" aria-label="Filtro de validade">
               <button class="segment active" type="button" data-filter="todos">Todos</button>
@@ -146,7 +103,7 @@
               <button class="segment" type="button" data-filter="atencao">Atenção</button>
               <button class="segment" type="button" data-filter="ok">Seguro</button>
             </div>
-            <button class="secondary-action" type="button" data-action="open-donation">Registrar doação</button>
+            <button class="secondary-action" type="button" data-action="open-stock-output">Cadastrar saída</button>
           </div>
           <div class="table-wrap">
             <table>
@@ -163,39 +120,38 @@
               <tbody id="stock-table"></tbody>
             </table>
           </div>
+          <section class="panel movement-panel">
+            <div class="panel-heading">
+              <div>
+                <h2>Saídas de estoque</h2>
+                <p>Últimas distribuições ou repasses cadastrados.</p>
+              </div>
+            </div>
+            <div class="movement-list" id="movement-list"></div>
+          </section>
         </section>
 
         <section class="view" id="beneficiarios" data-title="Gestão de beneficiários">
-          <div class="split-layout">
-            <section class="panel">
-              <div class="panel-heading">
-                <div>
-                  <h2>Cadastros em acompanhamento</h2>
-                  <p>Status, documentos e visitas pendentes.</p>
-                </div>
-                <button class="secondary-action" type="button" data-action="open-beneficiary">Novo cadastro</button>
+          <section class="panel">
+            <div class="panel-heading">
+              <div>
+                <h2>Cadastros em acompanhamento</h2>
+                <p>Status, endereço e visitas pendentes.</p>
               </div>
-              <div class="beneficiary-list" id="beneficiary-list"></div>
-            </section>
-
-            <section class="panel form-panel">
-              <h2>Cadastro rápido</h2>
-              <form class="stacked-form" id="beneficiary-form">
-                <label>Nome completo<input name="nome" placeholder="Ex.: Maria Aparecida" required></label>
-                <label>Telefone<input name="telefone" placeholder="(00) 00000-0000" required></label>
-                <label>Renda familiar<input name="renda" placeholder="Ex.: até 1 salário mínimo"></label>
-                <label>Composição familiar<input name="familia" placeholder="Ex.: 4 pessoas, 2 crianças"></label>
-                <button class="primary-action full" type="submit">Salvar cadastro</button>
-              </form>
-            </section>
-          </div>
+              <button class="secondary-action" type="button" data-action="open-beneficiary">Cadastrar beneficiário</button>
+            </div>
+            <div class="beneficiary-list" id="beneficiary-list"></div>
+          </section>
         </section>
 
-        <section class="view" id="visitas" data-title="Agenda de visitas domiciliares">
+        <section class="view" id="visitas" data-title="Agenda de Visitas">
+          <div class="toolbar right">
+            <button class="secondary-action" type="button" data-action="open-visit-schedule">Agendar visita</button>
+          </div>
           <div class="calendar-grid" id="visit-list"></div>
         </section>
 
-        <section class="view" id="doadores" data-title="Comunicação e doadores">
+        <section class="view" id="doadores" data-title="Doadores">
           <div class="communication-grid">
             <section class="panel">
               <div class="panel-heading">
@@ -203,7 +159,7 @@
                   <h2>Doadores ativos</h2>
                   <p>Cadastro, frequência e preferências de contato.</p>
                 </div>
-                <button class="secondary-action" type="button" data-action="open-public-form">Formulário público</button>
+                <button class="secondary-action" type="button" data-action="open-donor">Cadastrar doador</button>
               </div>
               <div class="donor-list" id="donor-list"></div>
             </section>
@@ -212,14 +168,12 @@
               <div class="message-card">
                 <span class="pill red">Estoque baixo</span>
                 <strong>Arroz, óleo e leite</strong>
-                <p>Disparo para 23 doadores com histórico desses itens.</p>
-                <button class="ghost-action" type="button">Preparar aviso</button>
+                <p>Disparo previsto para doadores com histórico desses itens.</p>
               </div>
               <div class="message-card">
                 <span class="pill green">Distribuição</span>
                 <strong>Cestas disponíveis no domingo</strong>
                 <p>Lembrete automático 24h antes para famílias ativas.</p>
-                <button class="ghost-action" type="button">Ver público</button>
               </div>
             </section>
           </div>
@@ -236,7 +190,7 @@
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path>
                 </svg>
-                Exportar PDF
+                Exportar
               </button>
             </div>
             <div class="report-filters">
@@ -267,48 +221,111 @@
       </main>
     </div>
 
-    <dialog class="modal" id="donation-modal">
-      <form method="dialog" class="modal-card" id="donation-form">
+    <dialog class="modal" id="stock-output-modal">
+      <form method="dialog" class="modal-card" id="stock-output-form">
         <div class="modal-heading">
-          <h2>Registrar entrada de doação</h2>
-          <button class="icon-button" type="button" data-close="donation-modal" aria-label="Fechar">
+          <h2>Cadastrar saída de estoque</h2>
+          <button class="icon-button" type="button" data-close="stock-output-modal" aria-label="Fechar">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
           </button>
         </div>
         <div class="form-grid">
-          <label>Doador<input name="doador" placeholder="Nome do doador" required></label>
-          <label>Alimento<input name="item" placeholder="Ex.: Feijão" required></label>
-          <label>Quantidade<input name="quantidade" placeholder="Ex.: 25 kg" required></label>
-          <label>Validade<input name="validade" type="date" required></label>
+          <label>Alimento<select name="item" id="stock-output-item" required></select></label>
+          <label>Quantidade<input name="quantidade" placeholder="Ex.: 20 kg" required></label>
+          <label>Destino<select name="destino" id="stock-output-destination" required></select></label>
+          <label>Data da saída<input name="data" type="date" required></label>
+          <label class="wide">Observação<input name="observacao" placeholder="Ex.: distribuição mensal"></label>
         </div>
         <menu>
-          <button class="secondary-action" value="cancel" type="button" data-close="donation-modal">Cancelar</button>
-          <button class="primary-action" value="default" type="submit">Salvar entrada</button>
+          <button class="secondary-action" type="button" data-close="stock-output-modal">Cancelar</button>
+          <button class="primary-action" type="submit">Salvar saída</button>
         </menu>
       </form>
     </dialog>
 
-    <dialog class="modal" id="public-form-modal">
-      <form method="dialog" class="modal-card" id="public-donor-form">
+    <dialog class="modal" id="beneficiary-modal">
+      <form method="dialog" class="modal-card" id="beneficiary-form">
         <div class="modal-heading">
-          <h2>Auto-cadastro de doador</h2>
-          <button class="icon-button" type="button" data-close="public-form-modal" aria-label="Fechar">
+          <h2>Cadastrar beneficiário</h2>
+          <button class="icon-button" type="button" data-close="beneficiary-modal" aria-label="Fechar">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
           </button>
         </div>
-        <div class="qr-area" aria-label="Prévia de QR Code">
-          <span></span><span></span><span></span><span></span>
+        <div class="form-grid">
+          <label>Nome completo<input name="nome" placeholder="Ex.: Maria Aparecida" required></label>
+          <label>Telefone<input name="telefone" placeholder="(00) 00000-0000" required></label>
+          <label class="wide">Endereço<input name="endereco" placeholder="Rua, número, bairro" required></label>
+          <label>Renda familiar<input name="renda" placeholder="Ex.: até 1 salário mínimo"></label>
+          <label>Composição familiar<input name="familia" placeholder="Ex.: 4 pessoas, 2 crianças"></label>
+        </div>
+        <menu>
+          <button class="secondary-action" type="button" data-close="beneficiary-modal">Cancelar</button>
+          <button class="primary-action" type="submit">Salvar beneficiário</button>
+        </menu>
+      </form>
+    </dialog>
+
+    <dialog class="modal" id="visit-schedule-modal">
+      <form method="dialog" class="modal-card" id="visit-schedule-form">
+        <div class="modal-heading">
+          <h2>Agendar visita</h2>
+          <button class="icon-button" type="button" data-close="visit-schedule-modal" aria-label="Fechar">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+          </button>
         </div>
         <div class="form-grid">
-          <label>Nome<input name="nome" placeholder="Nome completo" required></label>
+          <label>Beneficiário<select name="beneficiario" id="visit-beneficiary" required></select></label>
+          <label>Voluntário<input name="voluntario" placeholder="Nome do voluntário" required></label>
+          <label>Data<input name="data" type="date" required></label>
+          <label>Hora<input name="hora" type="time" required></label>
+        </div>
+        <menu>
+          <button class="secondary-action" type="button" data-close="visit-schedule-modal">Cancelar</button>
+          <button class="primary-action" type="submit">Agendar</button>
+        </menu>
+      </form>
+    </dialog>
+
+    <dialog class="modal" id="field-form-modal">
+      <form method="dialog" class="modal-card" id="field-form">
+        <div class="modal-heading">
+          <h2>Formulário de campo</h2>
+          <button class="icon-button" type="button" data-close="field-form-modal" aria-label="Fechar">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+          </button>
+        </div>
+        <input type="hidden" name="visitIndex" id="field-visit-index">
+        <div class="form-grid">
+          <label>Beneficiário<input name="beneficiario" id="field-beneficiary" readonly></label>
+          <label>Resultado<select name="resultado" required><option>Realizada</option><option>Reagendar</option><option>Cadastro suspenso</option></select></label>
+          <label class="wide">Situação verificada<input name="situacao" placeholder="Resumo da visita" required></label>
+          <label class="wide">Observações<input name="observacoes" placeholder="Informações adicionais"></label>
+        </div>
+        <menu>
+          <button class="secondary-action" type="button" data-close="field-form-modal">Cancelar</button>
+          <button class="primary-action" type="submit">Salvar visita</button>
+        </menu>
+      </form>
+    </dialog>
+
+    <dialog class="modal" id="donor-modal">
+      <form method="dialog" class="modal-card" id="donor-form">
+        <div class="modal-heading">
+          <h2>Cadastrar doador</h2>
+          <button class="icon-button" type="button" data-close="donor-modal" aria-label="Fechar">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+          </button>
+        </div>
+        <div class="form-grid">
+          <label>Nome<input name="nome" placeholder="Nome completo ou instituição" required></label>
           <label>WhatsApp<input name="whatsapp" placeholder="(00) 00000-0000" required></label>
           <label>E-mail<input name="email" type="email" placeholder="doador@email.com"></label>
-          <label>Frequência<select name="frequencia"><option>Mensal</option><option>Quinzenal</option><option>Eventual</option></select></label>
+          <label>Frequência<select name="frequencia"><option>Mensal</option><option>Quinzenal</option><option>Semanal</option><option>Eventual</option></select></label>
           <label class="wide">Tipo de doação habitual<input name="tipo" placeholder="Ex.: arroz, feijão, óleo"></label>
         </div>
         <menu>
-          <button class="secondary-action" type="button" data-close="public-form-modal">Cancelar</button>
-          <button class="primary-action" type="submit">Cadastrar</button>
+          <button class="secondary-action" type="button" data-close="donor-modal">Cancelar</button>
+          <button class="primary-action" type="submit">Salvar doador</button>
         </menu>
       </form>
     </dialog>
