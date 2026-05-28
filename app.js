@@ -185,6 +185,16 @@ function formatShortDate(value) {
   return new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "2-digit", timeZone: "UTC" }).format(new Date(value));
 }
 
+function getStockStatus(expiry) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const expiryDate = new Date(`${expiry}T00:00:00`);
+  const days = Math.ceil((expiryDate - today) / 86400000);
+  if (days <= 3) return "critico";
+  if (days <= 14) return "atencao";
+  return "ok";
+}
+
 function openModal(id) {
   document.querySelector(`#${id}`).showModal();
 }
@@ -203,6 +213,10 @@ document.querySelectorAll(".segment").forEach((button) => {
 
 document.querySelectorAll("[data-action='open-stock-output']").forEach((button) => {
   button.addEventListener("click", () => openModal("stock-output-modal"));
+});
+
+document.querySelectorAll("[data-action='open-stock-input']").forEach((button) => {
+  button.addEventListener("click", () => openModal("stock-input-modal"));
 });
 
 document.querySelectorAll("[data-action='open-beneficiary']").forEach((button) => {
@@ -239,6 +253,25 @@ document.querySelector("#stock-output-form").addEventListener("submit", (event) 
   event.currentTarget.reset();
   document.querySelector("#stock-output-modal").close();
   showToast("Saída de estoque cadastrada.");
+});
+
+document.querySelector("#stock-input-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const data = Object.fromEntries(new FormData(event.currentTarget));
+  stock.unshift({
+    item: data.item,
+    donor: data.doador,
+    quantity: `${data.quantidade} ${data.unidade}`,
+    expiry: data.validade,
+    status: getStockStatus(data.validade),
+    action: "Entrada cadastrada"
+  });
+  renderStock("todos");
+  document.querySelectorAll(".segment").forEach((segment) => segment.classList.toggle("active", segment.dataset.filter === "todos"));
+  renderPriorityList();
+  event.currentTarget.reset();
+  document.querySelector("#stock-input-modal").close();
+  showToast("Entrada de doação cadastrada.");
 });
 
 document.querySelector("#beneficiary-form").addEventListener("submit", (event) => {

@@ -207,6 +207,7 @@ p {
 }
 
 .topbar-actions,
+.toolbar-actions,
 .toolbar,
 .panel-heading,
 menu {
@@ -214,6 +215,11 @@ menu {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+}
+
+.toolbar-actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .primary-action,
@@ -518,6 +524,12 @@ select {
   border-radius: 8px;
   color: var(--ink);
   background: #fff;
+}
+
+.quantity-field {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 110px;
+  gap: 8px;
 }
 
 .beneficiary-item {

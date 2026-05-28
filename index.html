@@ -103,7 +103,10 @@
               <button class="segment" type="button" data-filter="atencao">Atenção</button>
               <button class="segment" type="button" data-filter="ok">Seguro</button>
             </div>
-            <button class="secondary-action" type="button" data-action="open-stock-output">Cadastrar saída</button>
+            <div class="toolbar-actions">
+              <button class="secondary-action" type="button" data-action="open-stock-input">Cadastrar entrada</button>
+              <button class="secondary-action" type="button" data-action="open-stock-output">Cadastrar saída</button>
+            </div>
           </div>
           <div class="table-wrap">
             <table>
@@ -239,6 +242,41 @@
         <menu>
           <button class="secondary-action" type="button" data-close="stock-output-modal">Cancelar</button>
           <button class="primary-action" type="submit">Salvar saída</button>
+        </menu>
+      </form>
+    </dialog>
+
+    <dialog class="modal" id="stock-input-modal">
+      <form method="dialog" class="modal-card" id="stock-input-form">
+        <div class="modal-heading">
+          <h2>Cadastrar entrada de doação</h2>
+          <button class="icon-button" type="button" data-close="stock-input-modal" aria-label="Fechar">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+          </button>
+        </div>
+        <div class="form-grid">
+          <label>Doador<input name="doador" placeholder="Nome do doador" required></label>
+          <label>Alimento<input name="item" placeholder="Ex.: Feijão" required></label>
+          <label>Quantidade
+            <div class="quantity-field">
+              <input name="quantidade" type="number" min="0.01" step="0.01" placeholder="Ex.: 25" required>
+              <select name="unidade" aria-label="Unidade de medida" required>
+                <option value="kg">kg</option>
+                <option value="g">g</option>
+                <option value="L">L</option>
+                <option value="ml">ml</option>
+                <option value="un.">un.</option>
+                <option value="pct.">pct.</option>
+                <option value="cx.">cx.</option>
+                <option value="cestas">cestas</option>
+              </select>
+            </div>
+          </label>
+          <label>Validade<input name="validade" type="date" required></label>
+        </div>
+        <menu>
+          <button class="secondary-action" type="button" data-close="stock-input-modal">Cancelar</button>
+          <button class="primary-action" type="submit">Salvar entrada</button>
         </menu>
       </form>
     </dialog>
