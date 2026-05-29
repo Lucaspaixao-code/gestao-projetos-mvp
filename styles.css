@@ -236,6 +236,12 @@ menu {
   font-weight: 800;
 }
 
+.compact-action {
+  min-height: 32px;
+  padding: 0 10px;
+  font-size: 0.82rem;
+}
+
 .primary-action {
   padding: 0 15px;
   color: #fff;
@@ -360,6 +366,18 @@ menu {
   grid-template-columns: 1fr;
 }
 
+.editable-item {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.record-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .item-title {
   display: flex;
   align-items: center;
@@ -472,7 +490,7 @@ menu {
 
 table {
   width: 100%;
-  min-width: 760px;
+  min-width: 860px;
   border-collapse: collapse;
 }
 
@@ -744,6 +762,7 @@ menu {
   }
 
   .beneficiary-item,
+  .editable-item,
   .donor-item,
   .expiry-item {
     grid-template-columns: 1fr;

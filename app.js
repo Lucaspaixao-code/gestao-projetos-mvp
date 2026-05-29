@@ -81,8 +81,9 @@ function renderStock(filter = currentFilter) {
   currentFilter = filter;
   const tbody = document.querySelector("#stock-table");
   tbody.innerHTML = stock
-    .filter((entry) => filter === "todos" || entry.status === filter)
-    .map((entry) => {
+    .map((entry, index) => ({ entry, index }))
+    .filter(({ entry }) => filter === "todos" || entry.status === filter)
+    .map(({ entry, index }) => {
       const [label, color] = labels[entry.status];
       return `
         <tr>
@@ -92,6 +93,7 @@ function renderStock(filter = currentFilter) {
           <td>${formatDate(entry.expiry)}</td>
           <td><span class="pill ${color}">${label}</span></td>
           <td>${entry.action}</td>
+          <td><button class="ghost-action compact-action" type="button" data-edit-stock="${index}">Editar</button></td>
         </tr>
       `;
     })
@@ -102,13 +104,16 @@ function renderStock(filter = currentFilter) {
 function renderMovements() {
   const list = document.querySelector("#movement-list");
   list.innerHTML = movements
-    .map((movement) => `
-      <article class="movement-item">
+    .map((movement, index) => `
+      <article class="movement-item editable-item">
         <div>
           <div class="item-title">${movement.item}</div>
           <div class="meta">${movement.quantity} - ${movement.destination} - ${formatDate(movement.date)}</div>
         </div>
-        <span class="pill blue">${movement.note || "Saída cadastrada"}</span>
+        <div class="record-actions">
+          <span class="pill blue">${movement.note || "Saída cadastrada"}</span>
+          <button class="ghost-action compact-action" type="button" data-edit-movement="${index}">Editar</button>
+        </div>
       </article>
     `)
     .join("");
@@ -116,13 +121,14 @@ function renderMovements() {
 
 function renderBeneficiaries() {
   document.querySelector("#beneficiary-list").innerHTML = beneficiaries
-    .map((person) => `
-      <article class="beneficiary-item no-action">
+    .map((person, index) => `
+      <article class="beneficiary-item editable-item">
         <div>
           <div class="item-title">${person.name} <span class="pill ${person.tag}">${person.status}</span></div>
           <div class="meta">${person.address}</div>
           <div class="meta">${person.phone} - ${person.visit}</div>
         </div>
+        <button class="ghost-action compact-action" type="button" data-edit-beneficiary="${index}">Editar</button>
       </article>
     `)
     .join("");
@@ -143,7 +149,10 @@ function renderVisits() {
           ${visit.result ? `<div class="meta">Resultado: ${visit.result}</div>` : ""}
         </div>
         <span class="pill ${visit.tag}">${visit.status}</span>
-        <button class="secondary-action" type="button" data-field-form="${index}">Abrir formulário de campo</button>
+        <div class="record-actions">
+          <button class="secondary-action" type="button" data-field-form="${index}">Abrir formulário de campo</button>
+          <button class="ghost-action compact-action" type="button" data-edit-visit="${index}">Editar</button>
+        </div>
       </article>
     `)
     .join("");
@@ -151,13 +160,14 @@ function renderVisits() {
 
 function renderDonors() {
   document.querySelector("#donor-list").innerHTML = donors
-    .map((donor) => `
-      <article class="donor-item no-action">
+    .map((donor, index) => `
+      <article class="donor-item editable-item">
         <div>
           <div class="item-title">${donor.name} <span class="pill ${donor.tag}">${donor.frequency}</span></div>
           <div class="meta">${donor.contact}</div>
           <div class="meta">Doação habitual: ${donor.type || "Não informado"}</div>
         </div>
+        <button class="ghost-action compact-action" type="button" data-edit-donor="${index}">Editar</button>
       </article>
     `)
     .join("");
@@ -195,8 +205,112 @@ function getStockStatus(expiry) {
   return "ok";
 }
 
+function splitQuantity(value) {
+  const match = String(value).trim().match(/^([\d.,]+)\s*(.*)$/);
+  return {
+    amount: match ? match[1].replace(",", ".") : "",
+    unit: match && match[2] ? match[2] : "kg"
+  };
+}
+
+function resetForm(form, titleId, titleText, submitId, submitText) {
+  form.reset();
+  form.elements.editIndex.value = "";
+  document.querySelector(`#${titleId}`).textContent = titleText;
+  document.querySelector(`#${submitId}`).textContent = submitText;
+}
+
 function openModal(id) {
   document.querySelector(`#${id}`).showModal();
+}
+
+function openStockInput(index = null) {
+  const form = document.querySelector("#stock-input-form");
+  resetForm(form, "stock-input-title", "Cadastrar entrada de doação", "stock-input-submit", "Salvar entrada");
+  if (index !== null) {
+    const entry = stock[index];
+    const quantity = splitQuantity(entry.quantity);
+    form.elements.editIndex.value = index;
+    form.elements.doador.value = entry.donor;
+    form.elements.item.value = entry.item;
+    form.elements.quantidade.value = quantity.amount;
+    form.elements.unidade.value = [...form.elements.unidade.options].some((option) => option.value === quantity.unit) ? quantity.unit : "kg";
+    form.elements.validade.value = entry.expiry;
+    document.querySelector("#stock-input-title").textContent = "Editar entrada de doação";
+    document.querySelector("#stock-input-submit").textContent = "Salvar alterações";
+  }
+  openModal("stock-input-modal");
+}
+
+function openStockOutput(index = null) {
+  const form = document.querySelector("#stock-output-form");
+  resetForm(form, "stock-output-title", "Cadastrar saída de estoque", "stock-output-submit", "Salvar saída");
+  fillStockSelect();
+  fillBeneficiarySelects();
+  if (index !== null) {
+    const movement = movements[index];
+    form.elements.editIndex.value = index;
+    form.elements.item.value = movement.item;
+    form.elements.quantidade.value = movement.quantity;
+    form.elements.destino.value = movement.destination;
+    form.elements.data.value = movement.date;
+    form.elements.observacao.value = movement.note || "";
+    document.querySelector("#stock-output-title").textContent = "Editar saída de estoque";
+    document.querySelector("#stock-output-submit").textContent = "Salvar alterações";
+  }
+  openModal("stock-output-modal");
+}
+
+function openBeneficiary(index = null) {
+  const form = document.querySelector("#beneficiary-form");
+  resetForm(form, "beneficiary-title", "Cadastrar beneficiário", "beneficiary-submit", "Salvar beneficiário");
+  if (index !== null) {
+    const person = beneficiaries[index];
+    form.elements.editIndex.value = index;
+    form.elements.nome.value = person.name;
+    form.elements.telefone.value = person.phone;
+    form.elements.endereco.value = person.address;
+    form.elements.renda.value = person.renda || "";
+    form.elements.familia.value = person.familia || "";
+    document.querySelector("#beneficiary-title").textContent = "Editar beneficiário";
+    document.querySelector("#beneficiary-submit").textContent = "Salvar alterações";
+  }
+  openModal("beneficiary-modal");
+}
+
+function openVisitSchedule(index = null) {
+  const form = document.querySelector("#visit-schedule-form");
+  resetForm(form, "visit-schedule-title", "Agendar visita", "visit-schedule-submit", "Agendar");
+  fillBeneficiarySelects();
+  if (index !== null) {
+    const visit = visits[index];
+    form.elements.editIndex.value = index;
+    form.elements.beneficiario.value = visit.person;
+    form.elements.voluntario.value = visit.volunteer;
+    form.elements.data.value = visit.date;
+    form.elements.hora.value = visit.hour;
+    document.querySelector("#visit-schedule-title").textContent = "Editar visita";
+    document.querySelector("#visit-schedule-submit").textContent = "Salvar alterações";
+  }
+  openModal("visit-schedule-modal");
+}
+
+function openDonor(index = null) {
+  const form = document.querySelector("#donor-form");
+  resetForm(form, "donor-title", "Cadastrar doador", "donor-submit", "Salvar doador");
+  if (index !== null) {
+    const donor = donors[index];
+    const [whatsapp, email = ""] = donor.contact.split(" - ");
+    form.elements.editIndex.value = index;
+    form.elements.nome.value = donor.name;
+    form.elements.whatsapp.value = whatsapp;
+    form.elements.email.value = email;
+    form.elements.frequencia.value = donor.frequency;
+    form.elements.tipo.value = donor.type || "";
+    document.querySelector("#donor-title").textContent = "Editar doador";
+    document.querySelector("#donor-submit").textContent = "Salvar alterações";
+  }
+  openModal("donor-modal");
 }
 
 document.querySelectorAll(".nav-item").forEach((button) => {
@@ -212,23 +326,23 @@ document.querySelectorAll(".segment").forEach((button) => {
 });
 
 document.querySelectorAll("[data-action='open-stock-output']").forEach((button) => {
-  button.addEventListener("click", () => openModal("stock-output-modal"));
+  button.addEventListener("click", () => openStockOutput());
 });
 
 document.querySelectorAll("[data-action='open-stock-input']").forEach((button) => {
-  button.addEventListener("click", () => openModal("stock-input-modal"));
+  button.addEventListener("click", () => openStockInput());
 });
 
 document.querySelectorAll("[data-action='open-beneficiary']").forEach((button) => {
-  button.addEventListener("click", () => openModal("beneficiary-modal"));
+  button.addEventListener("click", () => openBeneficiary());
 });
 
 document.querySelectorAll("[data-action='open-visit-schedule']").forEach((button) => {
-  button.addEventListener("click", () => openModal("visit-schedule-modal"));
+  button.addEventListener("click", () => openVisitSchedule());
 });
 
 document.querySelectorAll("[data-action='open-donor']").forEach((button) => {
-  button.addEventListener("click", () => openModal("donor-modal"));
+  button.addEventListener("click", () => openDonor());
 });
 
 document.querySelectorAll("[data-close]").forEach((button) => {
@@ -238,76 +352,101 @@ document.querySelectorAll("[data-close]").forEach((button) => {
 document.querySelector("#stock-output-form").addEventListener("submit", (event) => {
   event.preventDefault();
   const data = Object.fromEntries(new FormData(event.currentTarget));
-  movements.unshift({
+  const nextMovement = {
     item: data.item,
     quantity: data.quantidade,
     destination: data.destino,
     date: data.data,
     note: data.observacao || "Saída cadastrada"
-  });
+  };
+  if (data.editIndex !== "") {
+    movements[Number(data.editIndex)] = nextMovement;
+  } else {
+    movements.unshift(nextMovement);
+  }
   const stockItem = stock.find((entry) => entry.item === data.item);
   if (stockItem) stockItem.action = `Última saída: ${data.quantidade}`;
   renderStock();
   renderPriorityList();
   renderMovements();
-  event.currentTarget.reset();
+  resetForm(event.currentTarget, "stock-output-title", "Cadastrar saída de estoque", "stock-output-submit", "Salvar saída");
   document.querySelector("#stock-output-modal").close();
-  showToast("Saída de estoque cadastrada.");
+  showToast(data.editIndex !== "" ? "Saída de estoque atualizada." : "Saída de estoque cadastrada.");
 });
 
 document.querySelector("#stock-input-form").addEventListener("submit", (event) => {
   event.preventDefault();
   const data = Object.fromEntries(new FormData(event.currentTarget));
-  stock.unshift({
+  const nextEntry = {
     item: data.item,
     donor: data.doador,
     quantity: `${data.quantidade} ${data.unidade}`,
     expiry: data.validade,
     status: getStockStatus(data.validade),
-    action: "Entrada cadastrada"
-  });
+    action: data.editIndex !== "" ? "Entrada atualizada" : "Entrada cadastrada"
+  };
+  if (data.editIndex !== "") {
+    stock[Number(data.editIndex)] = nextEntry;
+  } else {
+    stock.unshift(nextEntry);
+  }
   renderStock("todos");
   document.querySelectorAll(".segment").forEach((segment) => segment.classList.toggle("active", segment.dataset.filter === "todos"));
   renderPriorityList();
-  event.currentTarget.reset();
+  resetForm(event.currentTarget, "stock-input-title", "Cadastrar entrada de doação", "stock-input-submit", "Salvar entrada");
   document.querySelector("#stock-input-modal").close();
-  showToast("Entrada de doação cadastrada.");
+  showToast(data.editIndex !== "" ? "Entrada de doação atualizada." : "Entrada de doação cadastrada.");
 });
 
 document.querySelector("#beneficiary-form").addEventListener("submit", (event) => {
   event.preventDefault();
   const data = Object.fromEntries(new FormData(event.currentTarget));
-  beneficiaries.unshift({
+  const current = data.editIndex !== "" ? beneficiaries[Number(data.editIndex)] : {};
+  const nextPerson = {
     name: data.nome,
     phone: data.telefone,
     address: data.endereco,
     area: data.endereco,
-    status: "Em análise",
-    visit: "Visita domiciliar pendente",
-    tag: "blue"
-  });
+    renda: data.renda,
+    familia: data.familia,
+    status: current.status || "Em análise",
+    visit: current.visit || "Visita domiciliar pendente",
+    tag: current.tag || "blue"
+  };
+  if (data.editIndex !== "") {
+    beneficiaries[Number(data.editIndex)] = nextPerson;
+  } else {
+    beneficiaries.unshift(nextPerson);
+  }
   renderBeneficiaries();
-  event.currentTarget.reset();
+  renderVisits();
+  resetForm(event.currentTarget, "beneficiary-title", "Cadastrar beneficiário", "beneficiary-submit", "Salvar beneficiário");
   document.querySelector("#beneficiary-modal").close();
-  showToast("Beneficiário cadastrado com status em análise.");
+  showToast(data.editIndex !== "" ? "Beneficiário atualizado." : "Beneficiário cadastrado com status em análise.");
 });
 
 document.querySelector("#visit-schedule-form").addEventListener("submit", (event) => {
   event.preventDefault();
   const data = Object.fromEntries(new FormData(event.currentTarget));
-  visits.unshift({
+  const current = data.editIndex !== "" ? visits[Number(data.editIndex)] : {};
+  const nextVisit = {
     date: data.data,
     hour: data.hora,
     person: data.beneficiario,
     volunteer: data.voluntario,
-    status: "Agendada",
-    tag: "blue",
-    result: ""
-  });
+    status: current.status || "Agendada",
+    tag: current.tag || "blue",
+    result: current.result || ""
+  };
+  if (data.editIndex !== "") {
+    visits[Number(data.editIndex)] = nextVisit;
+  } else {
+    visits.unshift(nextVisit);
+  }
   renderVisits();
-  event.currentTarget.reset();
+  resetForm(event.currentTarget, "visit-schedule-title", "Agendar visita", "visit-schedule-submit", "Agendar");
   document.querySelector("#visit-schedule-modal").close();
-  showToast("Visita agendada.");
+  showToast(data.editIndex !== "" ? "Visita atualizada." : "Visita agendada.");
 });
 
 document.querySelector("#field-form").addEventListener("submit", (event) => {
@@ -328,17 +467,22 @@ document.querySelector("#field-form").addEventListener("submit", (event) => {
 document.querySelector("#donor-form").addEventListener("submit", (event) => {
   event.preventDefault();
   const data = Object.fromEntries(new FormData(event.currentTarget));
-  donors.unshift({
+  const nextDonor = {
     name: data.nome,
     frequency: data.frequencia,
     contact: `${data.whatsapp}${data.email ? ` - ${data.email}` : ""}`,
     type: data.tipo,
     tag: "green"
-  });
+  };
+  if (data.editIndex !== "") {
+    donors[Number(data.editIndex)] = nextDonor;
+  } else {
+    donors.unshift(nextDonor);
+  }
   renderDonors();
-  event.currentTarget.reset();
+  resetForm(event.currentTarget, "donor-title", "Cadastrar doador", "donor-submit", "Salvar doador");
   document.querySelector("#donor-modal").close();
-  showToast("Doador cadastrado.");
+  showToast(data.editIndex !== "" ? "Doador atualizado." : "Doador cadastrado.");
 });
 
 document.querySelector("#export-report").addEventListener("click", () => {
@@ -347,12 +491,24 @@ document.querySelector("#export-report").addEventListener("click", () => {
 
 document.body.addEventListener("click", (event) => {
   const fieldButton = event.target.closest("[data-field-form]");
-  if (!fieldButton) return;
-  const index = Number(fieldButton.dataset.fieldForm);
-  const visit = visits[index];
-  document.querySelector("#field-visit-index").value = index;
-  document.querySelector("#field-beneficiary").value = visit.person;
-  openModal("field-form-modal");
+  const stockButton = event.target.closest("[data-edit-stock]");
+  const movementButton = event.target.closest("[data-edit-movement]");
+  const beneficiaryButton = event.target.closest("[data-edit-beneficiary]");
+  const visitButton = event.target.closest("[data-edit-visit]");
+  const donorButton = event.target.closest("[data-edit-donor]");
+
+  if (fieldButton) {
+    const index = Number(fieldButton.dataset.fieldForm);
+    const visit = visits[index];
+    document.querySelector("#field-visit-index").value = index;
+    document.querySelector("#field-beneficiary").value = visit.person;
+    openModal("field-form-modal");
+  }
+  if (stockButton) openStockInput(Number(stockButton.dataset.editStock));
+  if (movementButton) openStockOutput(Number(movementButton.dataset.editMovement));
+  if (beneficiaryButton) openBeneficiary(Number(beneficiaryButton.dataset.editBeneficiary));
+  if (visitButton) openVisitSchedule(Number(visitButton.dataset.editVisit));
+  if (donorButton) openDonor(Number(donorButton.dataset.editDonor));
 });
 
 renderPriorityList();

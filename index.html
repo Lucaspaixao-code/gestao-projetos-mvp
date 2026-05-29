@@ -118,6 +118,7 @@
                   <th>Validade</th>
                   <th>Status</th>
                   <th>Ação sugerida</th>
+                  <th>Ações</th>
                 </tr>
               </thead>
               <tbody id="stock-table"></tbody>
@@ -226,8 +227,9 @@
 
     <dialog class="modal" id="stock-output-modal">
       <form method="dialog" class="modal-card" id="stock-output-form">
+        <input type="hidden" name="editIndex" value="">
         <div class="modal-heading">
-          <h2>Cadastrar saída de estoque</h2>
+          <h2 id="stock-output-title">Cadastrar saída de estoque</h2>
           <button class="icon-button" type="button" data-close="stock-output-modal" aria-label="Fechar">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
           </button>
@@ -241,15 +243,16 @@
         </div>
         <menu>
           <button class="secondary-action" type="button" data-close="stock-output-modal">Cancelar</button>
-          <button class="primary-action" type="submit">Salvar saída</button>
+          <button class="primary-action" type="submit" id="stock-output-submit">Salvar saída</button>
         </menu>
       </form>
     </dialog>
 
     <dialog class="modal" id="stock-input-modal">
       <form method="dialog" class="modal-card" id="stock-input-form">
+        <input type="hidden" name="editIndex" value="">
         <div class="modal-heading">
-          <h2>Cadastrar entrada de doação</h2>
+          <h2 id="stock-input-title">Cadastrar entrada de doação</h2>
           <button class="icon-button" type="button" data-close="stock-input-modal" aria-label="Fechar">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
           </button>
@@ -276,15 +279,16 @@
         </div>
         <menu>
           <button class="secondary-action" type="button" data-close="stock-input-modal">Cancelar</button>
-          <button class="primary-action" type="submit">Salvar entrada</button>
+          <button class="primary-action" type="submit" id="stock-input-submit">Salvar entrada</button>
         </menu>
       </form>
     </dialog>
 
     <dialog class="modal" id="beneficiary-modal">
       <form method="dialog" class="modal-card" id="beneficiary-form">
+        <input type="hidden" name="editIndex" value="">
         <div class="modal-heading">
-          <h2>Cadastrar beneficiário</h2>
+          <h2 id="beneficiary-title">Cadastrar beneficiário</h2>
           <button class="icon-button" type="button" data-close="beneficiary-modal" aria-label="Fechar">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
           </button>
@@ -298,15 +302,16 @@
         </div>
         <menu>
           <button class="secondary-action" type="button" data-close="beneficiary-modal">Cancelar</button>
-          <button class="primary-action" type="submit">Salvar beneficiário</button>
+          <button class="primary-action" type="submit" id="beneficiary-submit">Salvar beneficiário</button>
         </menu>
       </form>
     </dialog>
 
     <dialog class="modal" id="visit-schedule-modal">
       <form method="dialog" class="modal-card" id="visit-schedule-form">
+        <input type="hidden" name="editIndex" value="">
         <div class="modal-heading">
-          <h2>Agendar visita</h2>
+          <h2 id="visit-schedule-title">Agendar visita</h2>
           <button class="icon-button" type="button" data-close="visit-schedule-modal" aria-label="Fechar">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
           </button>
@@ -319,7 +324,7 @@
         </div>
         <menu>
           <button class="secondary-action" type="button" data-close="visit-schedule-modal">Cancelar</button>
-          <button class="primary-action" type="submit">Agendar</button>
+          <button class="primary-action" type="submit" id="visit-schedule-submit">Agendar</button>
         </menu>
       </form>
     </dialog>
@@ -348,8 +353,9 @@
 
     <dialog class="modal" id="donor-modal">
       <form method="dialog" class="modal-card" id="donor-form">
+        <input type="hidden" name="editIndex" value="">
         <div class="modal-heading">
-          <h2>Cadastrar doador</h2>
+          <h2 id="donor-title">Cadastrar doador</h2>
           <button class="icon-button" type="button" data-close="donor-modal" aria-label="Fechar">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
           </button>
@@ -363,7 +369,7 @@
         </div>
         <menu>
           <button class="secondary-action" type="button" data-close="donor-modal">Cancelar</button>
-          <button class="primary-action" type="submit">Salvar doador</button>
+          <button class="primary-action" type="submit" id="donor-submit">Salvar doador</button>
         </menu>
       </form>
     </dialog>
